@@ -30,12 +30,14 @@ Funciones y constantes empiezan por MPI_ (más el nombre).
 
 Funciones devuelven entero.
 
-Antes de comenzar programa se debe hacer llamada a MPI_Init y antes de acabar se llama a MPI_Finalize.
+Antes de comenzar programa se debe hacer llamada a MPI_Init y antes de acabar se llama a MPI_Finalize:
 
 
-int main(int argc, char *argv[]){    
+int main(int argc, char *argv[]){
+
     MPI_Init(&argc,&argv);
     /*****************************/
+
     //a partir de aqui se pueden llamar funciones MPI
 
 
