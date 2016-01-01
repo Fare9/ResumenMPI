@@ -1,12 +1,17 @@
 # ResumenMPI
 
-Hardware: 
+Hardware:
+
     -maquinas = computadores completos(proc + mem), E/S.
+
     -Interconexión por redes.
+
     -Comunicación por operaciones E/S.
 
 Punto de vista programación:
+
     -Acceso direcciones privadas(mem. local)
+
     -Comunicación intercambio mensajes.
 
 Intervención de SSOO, uso de librerías.
@@ -17,15 +22,18 @@ MPI está normalizado para máquinas con MPI instalado.
 
 Cabecera necesaria: "mpi.h" .Con ello tendremos funciones y constantes definidas.
 
-Funciones y constantes empiezan por MPI_ (más el nombre). 
+Funciones y constantes empiezan por MPI_ (más el nombre).
+
     -Funciones: MPI_ + nombre que empieza por letra mayúscula.
-    -Constantes: MPI_ + nombre todo en mayusculas. 
+
+    -Constantes: MPI_ + nombre todo en mayusculas.
+
 Funciones devuelven entero.
 
 Antes de comenzar programa se debe hacer llamada a MPI_Init y antes de acabar se llama a MPI_Finalize.
 
-int main(int argc, char *argv[]){
-    
+
+int main(int argc, char *argv[]){    
     MPI_Init(&argc,&argv);
     /*****************************/
     //a partir de aqui se pueden llamar funciones MPI
