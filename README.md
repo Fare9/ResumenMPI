@@ -33,6 +33,7 @@ Funciones devuelven entero.
 Antes de comenzar programa se debe hacer llamada a MPI_Init y antes de acabar se llama a MPI_Finalize:
 
 
+
 int main(int argc, char *argv[]){
 
     MPI_Init(&argc,&argv);
