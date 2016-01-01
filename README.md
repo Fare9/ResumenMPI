@@ -113,7 +113,7 @@ Devuelve en tamanyo el número procesos en comunicador.
 #Comunicación colectiva
 
 
-int MPI_Bcast( void *buffer, int count, MPI_Datatype datatype,int root, MPI_Comm comm );
+    int MPI_Bcast( void *buffer, int count, MPI_Datatype datatype,int root, MPI_Comm comm );
 
 
 Puede resultar en:
