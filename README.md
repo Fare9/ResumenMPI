@@ -1,19 +1,19 @@
 # ResumenMPI
 
 Hardware:
-
+```
     -maquinas = computadores completos(proc + mem), E/S.
 
     -Interconexión por redes.
 
     -Comunicación por operaciones E/S.
-
+```
 Punto de vista programación:
-
+```
     -Acceso direcciones privadas(mem. local)
 
     -Comunicación intercambio mensajes.
-
+```
 Intervención de SSOO, uso de librerías.
 
 MPI ---> "Message Passing Interface" (interfaz paso de mensajes)
@@ -23,17 +23,17 @@ MPI está normalizado para máquinas con MPI instalado.
 Cabecera necesaria: "mpi.h" .Con ello tendremos funciones y constantes definidas.
 
 Funciones y constantes empiezan por MPI_ (más el nombre).
-
+```
     -Funciones: MPI_ + nombre que empieza por letra mayúscula.
 
     -Constantes: MPI_ + nombre todo en mayusculas.
-
+```
 Funciones devuelven entero.
 
 Antes de comenzar programa se debe hacer llamada a MPI_Init y antes de acabar se llama a MPI_Finalize:
 
 
-
+```C
 int main(int argc, char *argv[]){
 
     MPI_Init(&argc,&argv);
@@ -47,6 +47,7 @@ int main(int argc, char *argv[]){
     MPI_Finalize()
     
 }
+```
 
 -Grupo de comunicación (IMPORTANTE): familia de procesos, con permiso para intercambio mensajes. Existe uno por defecto MPI_COMM_WORLD, con todos los procesos en momento de arranque.
 En cada grupo cada proceso tiene id que se obtiene con MPI_Comm_rank. Número total procesos en grupo se consigue con MPI_Comm_size.
@@ -65,12 +66,12 @@ Antes de ejecutar, cada máquina debe tener acceso a copia o tener disco compart
 
 #Funciones MPI:
 
-
+```C
     int MPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
-
+```
 datatype puede ser:
 
-
+```
     -MPI_CHAR        signed char
 
     -MPI_SHORT       signed short int
@@ -80,49 +81,49 @@ datatype puede ser:
     -MPI_INT         signed int
 
     -MPI_DOUBLE      double
+```
 
-
-
+```C
     int MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status)
-
+```
 El parametro count, especifica número máximo elementos de datatype que caben en buffer buf. Si se envía mensaje más largo hay buffer overflow.
 MPI_Status tiene siguientes campos:
 
-
+```
     -MPI_SOURCE
 
     -MPI_TAG
 
     -MPI_ERROR
-
+```
 Contiene además información sobre tamaño de mensaje recibido, se obtiene mediante:
-
+```C
     MPI_Get_count (MPI_Status *status,MPI_Datatype datatype,int *cuenta);
-
+```
 Cuenta obtendrá el número de elementos de tipo datatype (no número de bytes, eso podría obtenerse como cuenta*sizeof(datatype) ).
-
+```C
     MPI_Comm_rank(MPI_Comm comunicador,int *rango);
-
+```
 Devuelve en rango el id del comunicador, comunicador es estructura agrupa procesos que pueden intercambiar mensajes.
-
+```C
     MPI_Comm_size(MPI_Comm comunicador,int *tamanyo);
-
+```
 Devuelve en tamanyo el número procesos en comunicador.
 
 
 #Comunicación colectiva
 
-
+```C
     int MPI_Bcast( void *buffer, int count, MPI_Datatype datatype,int root, MPI_Comm comm );
-
+```
 
 Puede resultar en:
 
-
+```
     -Recibir datos, si rango proceso es distinto de root.
 
     -Envío datos, si rango proceso es igual a raiz.
-
+```
 
 Valor datatype y count deben ser iguales en todos los procesos.
 Procesos afectados serán aquellos que estén en comm.
@@ -131,52 +132,53 @@ MPI garantiza que si se realizan varias llamadas a MPI_Bcast serán recibidas en
 (Ejemplo integración con trapecios en trap.c)
 
 Programa tiene dos fases:
-
+```
     -Calculo de integral
 
     -Suma de resultados
-
+```
 Primera fase está distribuida entre procesos, la suma solo la realiza el proceso 0, podríamos distribuir la suma entre los procesos.
-
+```C
     int MPI_Reduce(const void *sendbuf, void *recvbuf, int count,MPI_Datatype datatype,MPI_Op op, int root, MPI_Comm comm)
-
+```
 Combina operandos almacenados en sendbuf, usando la operación op, y almacena resultado en recvbuf en el proceso root.Tanto sendbuf como recvbuf se refieren a count elementos de tipo datatype. Esta función debe ser llamada en todos los procesos del grupo comm.
 
 op puede ser:
+```
     MPI_SUM,
     MPI_PROD,
     MPI_MAX,
     MPI_MIN,
     ...
-
+```
 resultado solo tiene sentido en raiz, pero los demás también han de especificarla.
 
 (Ejemplo de uso en trap2.c)
 
 Hay casos que queremos que todos los procesos obtengan el resultado:
 
-
+```C
     int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,MPI_Datatype datatype, MPI_Op op, MPI_Comm comm)
-
+```
 
 Al guardarse el resultado en todos, no hace falta el parámetro raíz.
 
 Las barreras están ya en MPI:
 
-
+```C
     MPI_Barrier(MPI_Comm grupo_com);
-
+```
 
 Procesos al llegar esperan hasta que todos los procesos de grupo_com llegan. Al llegar todos se desbloquean simultaneamente.
 
-
+```C
     MPI_Gather(void *buffer_envio,int cuenta_envio,MPI_Datatype tipo_envio, void *buffer recepcion,int cuenta_recepcion,MPI_Datatype tipo_recepcion,int raiz,MPI_Comm grupo_com);
-
+```
 
 Cada proceso del grupo envía contenidos buffer_envio a raiz. Raiz concatena datos en buffer_recepcion.(Los de 0...Los de 1...). Cuenta_recepcion indica numero items recibidos de cada proceso(no el total)
-
+```C
     MPI_Scatter(void *buffer_envio,int cuenta_envio,MPI_Datatype tipo_envio, void *buffer_recepcion, int cuenta_recepcion, MPI_Datatype tipo_recepcion, int raiz, MPI_Comm grupo_com);
-
+```
 Proceso con rango raiz distribuye buffer_envio en segmentos como procesos haya, cada uno tamaño = cuenta_envio. 
 
 
@@ -184,15 +186,15 @@ Proceso con rango raiz distribuye buffer_envio en segmentos como procesos haya, 
 
 Enviar mensajes costoso, intentar enviar mínimo posible. Solución agrupar mensajes. Tres formas:
 
-
+```
     -Parametro cuenta.
 
     -Tipos de datos derivados.
 
     -Rutinas MPI_Pack/MPI_Unpack.
-
+```
 Las funciones anteriores usaban todas cuenta y tipodato. Usuario se limita a mismo tipo básico. Los datos deben estar en memoria contigua(arrays estáticos) Ejemplo enviando segunda mitad de un array.
-
+```C
 float vector[100];
 
 if (mi_rango == 0){
@@ -204,7 +206,7 @@ if (mi_rango == 0){
     MPI_Recv(vector+50,50,MPI_FLOAT,0,0,MPI_COMM_WORLD,&status);
 
 }
-
+```
 Si datos no son mismo tipo, se construyen tipos derivados.
 Tipo MPI derivado = sucesión de pares.
 
@@ -217,17 +219,20 @@ Ejemplo:
     {(MPI_FLOAT,0),(MPI_FLOAT,16),(MPI_INT,24)}
 
 Función para construir tipo:
-    
+```C    
     MPI_Type_struct(int cuenta,int long_bloque[],MPI_Aint desplazamiento[],MPI_Datatype lista_de_tipos[],MPI_Datatype *nuevo_tipo);
-
+```
 Cuenta nº elementos tipo derivado y tamaño de vectos long_bloque,desplazamiento y lista_de_tipos.
-Lista_de_tipos: contiene tipo dato MPI para cada entrada
-Desplazamiento: desplazamiento respecto comienzo mensaje de cada entrada.
-Long_bloque: cuántos elementos de cada tipo hay en cada entrada.
+
+-Lista_de_tipos: contiene tipo dato MPI para cada entrada
+
+-Desplazamiento: desplazamiento respecto comienzo mensaje de cada entrada.
+
+-Long_bloque: cuántos elementos de cada tipo hay en cada entrada.
 
 Ejemplo:
 
-
+```C
     float a;
     float b;
     int n;
@@ -265,24 +270,25 @@ Ejemplo:
 
     //informamos de nuevo tipo
     MPI_Type_commit(&nuevo_tipo)
-
+```
 Dos funciones más:
     
 Igual a direccion = &variable,asegura portabilidad:
-    
+```C    
     MPI_Address(void *variable,MPI_Aint *direccion);
+```
 
 Para que SSOO realice cambios en el tipo nuevo:
-    
+```C 
     MPI_Type_commit(MPI_Datatype *nuevo_tipo);
-
+```
 ---------------------------------------------------------
 Constructor tipos más sencillos:
-    
+```C
     MPI_Type_contiguous(int cuenta,MPI_Datatype tipo_viejo,MPI_Datatype *tipo_nuevo);
-
+```
 Cuenta elementos contiguos de vectos de elementos de tipo = tipo_viejo.
-
+```C
     float A[10][10]
     MPI_Datatype tipo_fila_10;
 
@@ -294,20 +300,20 @@ Cuenta elementos contiguos de vectos de elementos de tipo = tipo_viejo.
     } else{
         MPI_Recv(&(A[2][0]),1,tipo_fila_10,0,0,MPI_COMM_WORLD,&status);
     }
-
+```
 El anterior era para memoria contigua, pero podemos tener un tipo de dato que coja tipos de datos espaciados.
-
+```C
     MPI_Type_vector(int cuenta,int long_bloque,int espaciado,MPI_Datatype tipo_elem, MPI_Datatype *tipo_nuevo);
-
+```
 
 Por último podemos empaquetar datos y desempaquetarlos al recibir:
-
+```C
     MPI_Pack(void *paquete,int cuenta, MPI_Datatype tipo_dato,void *buffer,int tamanyo_buffer,int *posicion,MPI_Comm grupo_com);
 
     MPI_Unpack(void *buffer,int tamanyo_buffer,int *posicion,void *desempaquetado,int cuenta, MPI_Datatype tipo_dato,MPI_Comm grupo_com);
-
+```
 Ejemplo de uso:
-
+```C
     float a;
     float b;
     int n;
@@ -333,4 +339,4 @@ Ejemplo de uso:
         MPI_Unpack(buffer,100,&posicion,&b,1,MPI_FLOAT,MPI_COMM_WORLD);
         MPI_Unpack(buffer,100,&posicion,&n,1,MPI_INT,MPI_COMM_WORLD);
     }
-
+```
