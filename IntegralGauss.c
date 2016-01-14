@@ -31,7 +31,7 @@ Algoritmo:
 void Resuelve(float myA[][MATRIZ+2], int pid,int nprocs) {
     /*
         Inicializamos valores para resolver la integral, segun el numero de procesos
-        que tengamos y si el proceso es par o impar entonces recivimos y enviamos unos valores
+        que tengamos y si el proceso es par o impar entonces recibimos y enviamos unos valores
         u otros
         Luego simplemente resolvemos la integral y llamamos a Reduce, entonces el proceso 0 pone la variable 
         de acabado a 1 y la envía a todo el mundo 
