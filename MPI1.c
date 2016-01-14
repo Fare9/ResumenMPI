@@ -8,7 +8,7 @@
 #include "mpi.h"
 
 
-int main(int argc, char *argv){
+int main(int argc, char *argv[]){
     int mi_rango;   //id del proceso
     int p;  //numero de procesos
     int fuente; //id del remitente
