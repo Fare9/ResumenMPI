@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
             sprintf(mensaje,"Saludos desde el proceso: %d",mi_rango);
             dest = 0;
             //ahora envio el mensaje, con strlen+1 para incluir '\0'
-            MPI_Send(mensaje,strlen(mensaje)+1,MPI_CHAR,dest,tag,MPI_COMM_WORLD)
+            MPI_Send(mensaje,strlen(mensaje)+1,MPI_CHAR,dest,tag,MPI_COMM_WORLD);
 
         } else {
             /*
